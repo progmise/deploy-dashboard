@@ -1,0 +1,28 @@
+:root {
+  color-scheme: dark;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #0d1117;
+  color: #e6edf3;
+}
+body { margin: 0; }
+main { max-width: 960px; margin: 0 auto; padding: 24px; }
+a { color: #58a6ff; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { background: #161b22; padding: 2px 6px; border-radius: 4px; }
+section { margin: 28px 0; }
+h2 { border-bottom: 1px solid #21262d; padding-bottom: 6px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #21262d; }
+th { color: #8b949e; font-weight: 600; font-size: 0.85em; text-transform: uppercase; }
+.badge { padding: 2px 8px; border-radius: 10px; font-size: 0.8em; font-weight: 600; }
+.badge.ok { background: #238636; color: #fff; }
+.badge.fail { background: #da3633; color: #fff; }
+.badge.running { background: #9e6a03; color: #fff; }
+.badge.draft { background: #30363d; color: #8b949e; }
+.muted { color: #8b949e; }
+.fail { color: #f85149; }
+.mermaid { background: #161b22; border-radius: 8px; padding: 16px; margin-top: 16px; text-align: center; }
+.mermaid svg { max-width: 100%; }
+.token-box { margin-top: 32px; color: #8b949e; }
+.token-box input { background: #0d1117; border: 1px solid #30363d; color: #e6edf3; padding: 6px 10px; border-radius: 6px; margin: 8px 4px 8px 0; }
+.token-box button { background: #238636; border: 0; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; }

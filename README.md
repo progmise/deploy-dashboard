@@ -44,3 +44,9 @@ Repo secrets/vars: `DOCKER_TOKEN` + `DOCKER_USERNAME` (var),
 Vercel project env vars (Production): `GITHUB_CLIENT_ID`,
 `GITHUB_CLIENT_SECRET`. The OAuth App's callback must be
 `https://<project>.vercel.app/api/auth/callback`.
+
+The Vercel project's **Framework Preset must be `Container`**
+(Settings → General → Build & Development Settings). Vercel
+auto-detects `Dockerfile.vercel` (kept in sync with `Dockerfile`)
+and routes all traffic to the built image — the Express server
+serves the SPA, `/api/*` and OAuth on `$PORT`.

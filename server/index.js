@@ -92,6 +92,11 @@ app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: pkg.vers
 
 const dist = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist');
 app.use(express.static(dist));
-app.use((_req, res) => res.sendFile(path.join(dist, 'index.html')));
+// SPA fallback only for extension-less routes — missing assets must 404,
+// not serve HTML (breaks module loading with confusing MIME errors).
+app.use((req, res) =>
+  req.path.includes('.')
+    ? res.sendStatus(404)
+    : res.sendFile(path.join(dist, 'index.html')));
 
 app.listen(PORT, () => console.log(`deploy-dashboard:${pkg.version} on :${PORT}`));

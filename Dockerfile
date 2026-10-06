@@ -12,12 +12,14 @@ RUN npm run build
 
 FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
 # Bump packages with known fixes beyond the pinned base (CSA findings)
-RUN apk upgrade --no-cache libexpat \
- && npm install -g npm@12.2.0 && npm cache clean --force
+RUN apk upgrade --no-cache libexpat
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+# The runtime only executes `node server/index.js` — remove npm entirely:
+# its bundled deps (brace-expansion/undici/tar/…) carry known CVEs
+RUN npm ci --omit=dev && npm cache clean --force \
+ && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 COPY server ./server
 COPY --from=build /app/dist ./dist
 USER node

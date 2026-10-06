@@ -1,16 +1,25 @@
-# React + Vite
+# deploy-dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React SPA (Vite) that fronts the `deploy-manifest` orchestrator — the Gluon
+equivalent for progmise. Read-only: shows the current release manifest
+(components, tags, `needs` graph rendered with Mermaid), the release list
+(draft/published) and the orchestrated deploy runs, plus each component's
+latest `deploy.yml` run.
 
-Currently, two official plugins are available:
+## Local
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm ci
+npm run dev
+```
 
-## React Compiler
+## Deploy
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+GitHub Pages via `.github/workflows/pages.yml` (build → `deploy-pages`),
+published at `progmise.github.io/deploy-dashboard`.
 
-## Expanding the Oxlint configuration
+## Notes
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- Reads `manifest.yml` + the GitHub REST API anonymously (60 req/h per IP).
+  Paste a PAT in the page's token box to raise the limit — it stays in
+  `localStorage` only.

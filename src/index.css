@@ -23,6 +23,15 @@ th { color: #8b949e; font-weight: 600; font-size: 0.85em; text-transform: upperc
 .fail { color: #f85149; }
 .mermaid { background: #161b22; border-radius: 8px; padding: 16px; margin-top: 16px; text-align: center; }
 .mermaid svg { max-width: 100%; }
-.token-box { margin-top: 32px; color: #8b949e; }
-.token-box input { background: #0d1117; border: 1px solid #30363d; color: #e6edf3; padding: 6px 10px; border-radius: 6px; margin: 8px 4px 8px 0; }
-.token-box button { background: #238636; border: 0; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; }
+header { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+header h1 { margin-right: auto; }
+.user { display: flex; align-items: center; gap: 8px; }
+.user img { border-radius: 50%; }
+.login { text-align: center; padding-top: 15vh; }
+.login-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #238636; color: #fff; font-weight: 600;
+  padding: 10px 22px; border-radius: 8px; margin-top: 20px;
+}
+.login-btn:hover { background: #2ea043; text-decoration: none; }
+

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 import { getComponentRuns } from './api.js';
 
+
+
 mermaid.initialize({ startOnLoad: false, theme: 'dark' });
 
 export function MermaidGraph({ components }) {
@@ -84,26 +86,5 @@ export function OrchRuns({ runs }) {
         ))}
       </tbody>
     </table>
-  );
-}
-
-export function TokenBox() {
-  const [val, setVal] = useState(localStorage.getItem('gh_token') || '');
-  return (
-    <details className="token-box">
-      <summary>GitHub token (optional — raises API rate limit)</summary>
-      <input
-        type="password"
-        placeholder="PAT (read-only is enough)"
-        value={val}
-        onChange={(e) => setVal(e.target.value)}
-      />
-      <button onClick={() => {
-        val ? localStorage.setItem('gh_token', val)
-            : localStorage.removeItem('gh_token');
-        location.reload();
-      }}>Save</button>
-      <p className="muted">Stored only in this browser's localStorage.</p>
-    </details>
   );
 }

@@ -16,7 +16,8 @@ async function getJson(url) {
 }
 
 export function getMe() {
-  return fetch('/api/me').then((r) => (r.ok ? r.json() : null));
+  return fetch('/api/me').then((r) =>
+    r.ok ? r.json() : r.status === 403 ? { forbidden: true } : null);
 }
 
 export async function getManifest() {

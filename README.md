@@ -46,7 +46,6 @@ Vercel project env vars (Production): `GITHUB_CLIENT_ID`,
 `https://<project>.vercel.app/api/auth/callback`.
 
 The Vercel project's **Framework Preset must be `Container`**
-(Settings → General → Build & Development Settings). Vercel
-auto-detects `Dockerfile.vercel` (kept in sync with `Dockerfile`)
-and routes all traffic to the built image — the Express server
-serves the SPA, `/api/*` and OAuth on `$PORT`.
+(Settings → General → Build & Development Settings). Vercel builds
+the root `Dockerfile` and routes all traffic to the container —
+the Express server serves the SPA, `/api/*` and OAuth on `$PORT`.

@@ -1,26 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getTemplates, createComponent, retryProvision } from './api.js';
+import { NAME_RE, REPO_RE, STATUS_LABEL } from '../../../domain/component.js';
+import { getTemplates, createComponent, retryProvision } from '../../../infrastructure/api/catalogApi.js';
+import { StatusPill } from '../../components/Feedback.jsx';
 
-// Provisioning lifecycle — mirrors the state machine in the API
-// (src/provision.js). Pending states render as "in progress".
-const STATUS_LABEL = {
-  pending: 'En cola',
-  repo_created: 'Repo creado',
-  secrets_written: 'Secrets configurados',
-  vars_written: 'Variables configuradas',
-  manifest_pr_opened: 'PR al manifest',
-  ready: 'Ready',
-  failed: 'Falló',
-};
-
-export function statusPill(status) {
-  if (status === 'ready') return <span className="pill ok">Ready</span>;
-  if (status === 'failed') return <span className="pill fail">Failed</span>;
-  if (!status) return <span className="muted">—</span>;
-  return <span className="pill running">{STATUS_LABEL[status] || status}</span>;
-}
-
-export function ComponentWizard({ onClose, onCreated }) {
+export default function ComponentWizard({ onClose, onCreated }) {
   const [step, setStep] = useState(0);
   const [templates, setTemplates] = useState(null);
   const [template, setTemplate] = useState(null);
@@ -36,8 +19,8 @@ export function ComponentWizard({ onClose, onCreated }) {
 
   const setField = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const repoName = repoTouched ? form.repo : form.name;
-  const nameOk = /^[a-z0-9][a-z0-9-]{0,38}[a-z0-9]$/.test(form.name);
-  const repoOk = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,99}$/.test(repoName);
+  const nameOk = NAME_RE.test(form.name);
+  const repoOk = REPO_RE.test(repoName);
 
   const submit = async () => {
     setBusy(true);
@@ -145,7 +128,7 @@ export function ComponentWizard({ onClose, onCreated }) {
 
         {result && (
           <div className="result">
-            <p>{statusPill(result.status)}</p>
+            <p><StatusPill status={result.status} /></p>
             <p>
               <a href={`https://github.com/${result.repo}`} target="_blank" rel="noreferrer">
                 {result.repo} ↗

@@ -7,7 +7,6 @@ const STATUS_LABEL = {
   pending: 'En cola',
   repo_created: 'Repo creado',
   secrets_written: 'Secrets configurados',
-  vercel_project_created: 'Proyecto Vercel',
   vars_written: 'Variables configuradas',
   manifest_pr_opened: 'PR al manifest',
   ready: 'Ready',

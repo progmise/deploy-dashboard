@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getMe, getManifest, getReleases, getOrchRuns } from './api.js';
+import { getMe, getManifest, getReleases, getOrchRuns, getComponents, retryProvision } from './api.js';
 import { MermaidGraph, Releases, ComponentRuns, OrchRuns } from './components.jsx';
+import { ComponentWizard, statusPill } from './wizard.jsx';
 
 const GhIcon = (
   <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true">
@@ -69,9 +70,13 @@ export default function App() {
   const [manifest, setManifest] = useState(null);
   const [releases, setReleases] = useState([]);
   const [runs, setRuns] = useState([]);
+  const [catalog, setCatalog] = useState([]);
+  const [wizard, setWizard] = useState(false);
   const [error, setError] = useState(null);
   const [view, setView] = useState('releases');
   const [q, setQ] = useState('');
+
+  const loadCatalog = () => getComponents().then(setCatalog).catch(() => setCatalog([]));
 
   useEffect(() => {
     getMe().then(setMe);
@@ -89,6 +94,7 @@ export default function App() {
     ])
       .then(([m, r, o]) => { setManifest(m); setReleases(r); setRuns(o); })
       .catch((e) => setError(e.message));
+    loadCatalog();
   }, [me]);
 
   if (me === undefined) return <CenterCard title="Deploy Orchestrator" sub="Cargando…" />;
@@ -152,13 +158,19 @@ export default function App() {
             <>
               <div className="card">
                 <h2>Componentes</h2>
-                <SearchRow q={q} setQ={setQ} placeholder="Buscar componente…" />
+                <SearchRow q={q} setQ={setQ} placeholder="Buscar componente…"
+                  action={
+                    <button className="btn btn-primary" style={{ marginLeft: 'auto' }}
+                      onClick={() => setWizard(true)}>Nuevo componente +</button>
+                  } />
                 <table>
                   <thead>
-                    <tr><th>Nombre</th><th>Repo</th><th>Versión</th><th>Dependencias</th><th>Último deploy</th></tr>
+                    <tr><th>Nombre</th><th>Repo</th><th>Versión</th><th>Dependencias</th><th>Estado</th><th>Último deploy</th></tr>
                   </thead>
                   <tbody>
-                    {manifest.components
+                    {[...manifest.components.map((c) => ({ ...c, db: catalog.find((d) => d.name === c.name) })),
+                      ...catalog.filter((d) => !manifest.components.some((c) => c.name === d.name))
+                        .map((d) => ({ name: d.name, repo: d.repo, tag: '—', needs: [], db: d }))]
                       .filter((c) => !lower || c.name.toLowerCase().includes(lower) || c.repo.toLowerCase().includes(lower))
                       .map((c) => (
                       <tr key={c.name}>
@@ -170,6 +182,14 @@ export default function App() {
                             ? c.needs.map((n) => <span key={n} className="chip">{n}</span>)
                             : <span className="muted">—</span>}
                         </span></td>
+                        <td>{c.db
+                          ? <>
+                              {statusPill(c.db.status)}
+                              {c.db.status === 'failed' &&
+                                <button className="btn btn-outline" style={{ padding: '2px 10px', marginLeft: 8 }}
+                                  onClick={() => retryProvision(c.name).then(loadCatalog).catch(loadCatalog)}>↻</button>}
+                            </>
+                          : <span className="pill outline">deployed</span>}</td>
                         <td><ComponentRuns repo={c.repo} /></td>
                       </tr>
                     ))}
@@ -193,6 +213,7 @@ export default function App() {
 
         </div>
       </div>
+      {wizard && <ComponentWizard onClose={() => setWizard(false)} onCreated={loadCatalog} />}
     </>
   );
 }

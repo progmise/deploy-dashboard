@@ -40,3 +40,35 @@ export function getComponentRuns(repo) {
     `/api/gh/repos/${repo}/actions/workflows/deploy.yml/runs?event=workflow_dispatch&per_page=5`,
   ).then((d) => d.workflow_runs);
 }
+
+// --- Component catalog (Supabase-backed, via the API) ------------------------
+
+export function getTemplates() {
+  return getJson('/api/templates');
+}
+
+export function getComponents() {
+  return getJson('/api/components');
+}
+
+export function getComponent(name) {
+  return getJson(`/api/components/${encodeURIComponent(name)}`);
+}
+
+export async function createComponent(body) {
+  const r = await fetch('/api/components', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw Object.assign(new Error(data.error || r.status), { component: data.component });
+  return data;
+}
+
+export async function retryProvision(name) {
+  const r = await fetch(`/api/components/${encodeURIComponent(name)}/provision`, { method: 'POST' });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw Object.assign(new Error(data.error || r.status), { component: data.component });
+  return data;
+}

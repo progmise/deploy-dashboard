@@ -58,7 +58,8 @@ npm run lint        # oxlint — keep at 0 warnings
 
 ## Branches
 
-GitFlow: `development` is default (PR there), `main` holds releases.
+GitFlow: `main` is the default branch and holds releases; `development` is
+the integration branch (all work is PR'd there).
 Work branches: `<type>/<snake_description>` — `feature/`, `fix/`, `chore/`,
 `docs/`, `refactor/`.
 

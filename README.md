@@ -42,7 +42,9 @@ Repo secrets/vars: `DOCKER_TOKEN` + `DOCKER_USERNAME` (var),
 `VERCEL_TOKEN` + `VERCEL_ORG_ID`/`VERCEL_PROJECT_ID` (vars).
 
 Vercel project env vars (Production): `GITHUB_CLIENT_ID`,
-`GITHUB_CLIENT_SECRET`. The OAuth App's callback must be
+`GITHUB_CLIENT_SECRET`, and `ALLOWED_USERS` (comma-separated
+GitHub logins — only these users can sign in; empty allows any
+authenticated user). The OAuth App's callback must be
 `https://<project>.vercel.app/api/auth/callback`.
 
 The Vercel project's **Framework Preset must be `Container`**

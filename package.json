@@ -1,5 +1,5 @@
 {
-  "name": "deploy-dashboard",
+  "name": "deploy-orchestrator",
   "private": false,
   "version": "1.2.0",
   "type": "module",

@@ -11,6 +11,12 @@ Shows: the current release manifest (components, tags, `needs` graph via
 Mermaid), the release list (draft = pending approval, published = deployable),
 orchestrated deploy runs, and each component's latest `deploy.yml` run.
 
+The **Componentes** view merges the manifest with the Supabase-backed
+component catalog — a **Nuevo componente +** wizard (template → info →
+summary) provisions a repo from a template, its Vercel project and
+secrets/vars, and opens the manifest registration PR. Failed components
+can be retried in place.
+
 ## Stack
 
 - `src/` — React 19 + Vite SPA → `dist/`

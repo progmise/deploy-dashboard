@@ -31,6 +31,11 @@ app.use('/api', async (req, res) => {
       method: req.method,
       redirect: 'manual',
       headers,
+      // Forward the request body for non-GET methods (POST /api/components…);
+      // duplex:'half' is required by undici for streamed request bodies.
+      ...(req.method !== 'GET' && req.method !== 'HEAD'
+        ? { body: req, duplex: 'half' }
+        : {}),
     });
     res.status(r.status);
     r.headers.forEach((v, k) => { if (!HOP_RES.has(k)) res.setHeader(k, v); });

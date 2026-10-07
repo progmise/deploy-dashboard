@@ -1,4 +1,4 @@
-# deploy-dashboard
+# deploy-orchestrator
 
 React SPA — the Gluon-equivalent front for the `deploy-manifest`
 orchestrator. The backend lives in a separate repo:
@@ -33,7 +33,7 @@ npm start              # :8080 — /api/* proxies to the API
 
 Same `app-*` thin callers as every deployable repo
 (`reusable-workflows@v1`): CI on PR, integration publishes
-`docker.io/progmise/deploy-dashboard` on merge, release tags + publishes
+`docker.io/progmise/deploy-orchestrator` on merge, release tags + publishes
 `:<version>` (version lives in `package.json`), deploy to Vercel via
 `deploy.yml` or the `deploy-manifest` orchestrator.
 

@@ -19,8 +19,8 @@ export function getOrchRuns() {
   ).then((d) => d.workflow_runs);
 }
 
-export function getComponentRuns(repo) {
+export function getComponentRuns(repo, workflow = 'deploy.yml') {
   return apiGet(
-    `/api/gh/repos/${repo}/actions/workflows/deploy.yml/runs?event=workflow_dispatch&per_page=5`,
+    `/api/gh/repos/${repo}/actions/workflows/${workflow}/runs?per_page=5`,
   ).then((d) => d.workflow_runs);
 }

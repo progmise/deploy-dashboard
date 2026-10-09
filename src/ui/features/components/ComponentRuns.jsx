@@ -1,10 +1,10 @@
 import { useComponentRuns } from '../../../application/useComponentRuns.js';
 import { RunBadge } from '../../components/Feedback.jsx';
 
-export default function ComponentRuns({ repo }) {
-  const runs = useComponentRuns(repo);
+export default function ComponentRuns({ repo, workflow }) {
+  const runs = useComponentRuns(repo, workflow);
   if (!runs) return <span className="muted">…</span>;
-  if (!runs.length) return <span className="muted">sin deploys</span>;
+  if (!runs.length) return <span className="muted">sin runs</span>;
   const r = runs[0];
   return (
     <a href={r.html_url} target="_blank" rel="noreferrer">

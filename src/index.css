@@ -95,6 +95,9 @@ tbody tr:hover { background: var(--panel); }
 .pill.outline { background: #fff; border: 1px solid #cfd8e3; color: var(--text);
   font-weight: 500; }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.tools { display: inline-flex; gap: 10px; align-items: center; }
+.tools a { color: var(--muted); display: inline-flex; }
+.tools a:hover { color: var(--text); }
 .chip {
   padding: 2px 12px; border-radius: 999px; font-size: 12px;
   background: #eef1f6; border: 1px solid #dfe5ee; color: #475569;

@@ -1,5 +1,6 @@
 import { mergeCatalog } from '../../../domain/component.js';
 import { retryProvision } from '../../../infrastructure/api/catalogApi.js';
+import { StatusPill } from '../../components/Feedback.jsx';
 import { GhIcon, PrIcon } from '../../components/Icons.jsx';
 
 const dateOnly = (iso) => (iso ? new Date(iso).toLocaleDateString() : '—');
@@ -18,7 +19,7 @@ export default function ComponentsTable({ manifest, catalog, templates = [], q, 
       <thead>
         <tr>
           <th>Nombre</th><th>Nombre corto</th><th>Plantilla</th>
-          <th>Creado</th><th>Herramientas</th>
+          <th>Creado</th><th>Herramientas</th><th>Estado</th>
         </tr>
       </thead>
       <tbody>
@@ -40,11 +41,16 @@ export default function ComponentsTable({ manifest, catalog, templates = [], q, 
                   <a href={`https://github.com/progmise/deploy-manifest/pull/${c.db.manifest_pr}`}
                      target="_blank" rel="noreferrer"
                      title={`PR de registro #${c.db.manifest_pr}`}>{PrIcon}</a>}
-                {c.db?.status === 'failed' &&
-                  <button className="btn btn-outline" style={{ padding: '2px 10px' }}
-                    title="Reintentar provisioning"
-                    onClick={() => retryProvision(c.name).then(onChanged).catch(onChanged)}>↻</button>}
               </span></td>
+              <td>{c.db
+                ? <>
+                    <StatusPill status={c.db.status} />
+                    {c.db.status === 'failed' &&
+                      <button className="btn btn-outline" style={{ padding: '2px 10px', marginLeft: 8 }}
+                        title="Reintentar provisioning"
+                        onClick={() => retryProvision(c.name).then(onChanged).catch(onChanged)}>↻</button>}
+                  </>
+                : <span className="muted">—</span>}</td>
             </tr>
           );
         })}

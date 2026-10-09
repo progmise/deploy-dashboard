@@ -26,6 +26,7 @@ export default function App() {
   const [view, setView] = useState('releases');
   const [q, setQ] = useState('');
   const [filters, setFilters] = useState({ plantilla: '', estado: '' });
+  const [collapsed, setCollapsed] = useState(false);
 
   if (me === undefined) return <CenterCard title="Deploy Orchestrator" sub="Cargando…" />;
   if (me?.forbidden) return <Unauthorized />;
@@ -59,13 +60,15 @@ export default function App() {
         </span>
       </div>
       <div className="layout">
-        <nav className="sidebar">
+        <nav className={`sidebar${collapsed ? ' collapsed' : ''}`}>
           {NAV.map((n) => (
-            <a key={n.id} className={view === n.id ? 'active' : ''}
+            <a key={n.id} className={view === n.id ? 'active' : ''} title={n.label}
                onClick={() => { setView(n.id); setQ(''); }}>
-              <Ico d={n.icon} />{n.label}
+              <Ico d={n.icon} />{!collapsed && n.label}
             </a>
           ))}
+          <button className="sidebar-toggle" onClick={() => setCollapsed((c) => !c)}
+            title={collapsed ? 'Expandir' : 'Colapsar'}>{collapsed ? '›' : '‹'}</button>
         </nav>
         <div className="content">
 

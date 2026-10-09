@@ -250,8 +250,9 @@ tbody tr:hover { background: var(--panel); }
 .tpl-card.selected { border-color: var(--teal); }
 .chip-teal { background: #e6f4f4; border-color: #bfe3e3; color: var(--teal); }
 .graph-picker {
-  border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px;
-  font-size: 13px; font-family: inherit; background: #fff; margin-bottom: 10px;
+  display: block; border: 1px solid var(--line); border-radius: 8px;
+  padding: 7px 12px; font-size: 13px; font-family: inherit;
+  background: #fff; margin: 4px 0 12px; min-width: 220px;
 }
 
 .form { display: flex; flex-direction: column; gap: 14px; }

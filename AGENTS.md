@@ -29,7 +29,7 @@ src/
     components/              shared presentational (Feedback, Icons)
     features/
       session/Gate.jsx       Login / Unauthorized / UserMenu
-      releases/ReleasesTable.jsx
+      releases/ReleasesView.jsx, ReleaseDetail.jsx
       components/            ComponentsTable, ComponentRuns,
                              DependencyGraph (mermaid), ComponentWizard —
                              4 steps; "Personalización" renders the

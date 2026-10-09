@@ -91,9 +91,10 @@ export default function ComponentWizard({ onClose, onCreated }) {
                 <button key={t.name}
                   className={`tpl-card${template?.name === t.name ? ' selected' : ''}`}
                   onClick={() => pick(t)}>
-                  <strong>{t.name}</strong>
+                  <strong>{t.display_name || t.name}</strong>
                   <span className="muted">{t.description || '—'}</span>
                   <span className={`chip${t.kind === 'lib' ? '' : ' chip-teal'}`}>{t.kind}</span>
+                  <span className="muted" style={{ fontSize: 11 }}>{t.name}</span>
                 </button>
               ))}
             </div>
@@ -161,7 +162,7 @@ export default function ComponentWizard({ onClose, onCreated }) {
                 <tr><td>Componente</td><td><strong>{form.name}</strong></td></tr>
                 <tr><td>Nombre corto</td><td><code>{shortname}</code></td></tr>
                 <tr><td>Repositorio</td><td>progmise/{repoName}</td></tr>
-                <tr><td>Plantilla</td><td>{template.name} <span className="chip">{template.kind}</span></td></tr>
+                <tr><td>Plantilla</td><td>{template.display_name || template.name} <span className="chip">{template.kind}</span></td></tr>
                 <tr><td>Descripción</td><td>{form.description}</td></tr>
                 {(template.fields || []).map((f) => (
                   <tr key={f.key}>

@@ -3,7 +3,7 @@ import { useSession } from '../application/useSession.js';
 import { useDashboardData } from '../application/useDashboardData.js';
 import { filter } from '../domain/component.js';
 import { CenterCard, SearchRow } from '../ui/components/Feedback.jsx';
-import { Ico } from '../ui/components/Icons.jsx';
+import { Ico, ICON } from '../ui/components/Icons.jsx';
 import { Login, Unauthorized, UserMenu } from '../ui/features/session/Gate.jsx';
 import ReleasesTable from '../ui/features/releases/ReleasesTable.jsx';
 import ComponentsTable from '../ui/features/components/ComponentsTable.jsx';
@@ -13,9 +13,9 @@ import TemplateGallery from '../ui/features/components/TemplateGallery.jsx';
 import OrchRuns from '../ui/features/deployments/OrchRuns.jsx';
 
 const NAV = [
-  { id: 'releases', label: 'Releases', icon: 'M20.59 13.41 12 22 2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z M7 7h.01' },
-  { id: 'componentes', label: 'Componentes', icon: 'M21 8 12 3 3 8v8l9 5 9-5V8z M3 8l9 5 9-5 M12 13v8' },
-  { id: 'despliegues', label: 'Despliegues', icon: 'M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z' },
+  { id: 'releases', label: 'Releases', icon: ICON.releases },
+  { id: 'componentes', label: 'Componentes', icon: ICON.componentes },
+  { id: 'despliegues', label: 'Despliegues', icon: ICON.despliegues },
 ];
 
 export default function App() {
@@ -40,7 +40,7 @@ export default function App() {
     <>
       <div className="topbar">
         <span className="logo">
-          <Ico d="M12 2 2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5" />
+          <Ico d={ICON.logo} />
           ORCHESTRATOR
         </span>
         <span className="title">{viewLabel}</span>

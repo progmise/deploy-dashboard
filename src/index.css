@@ -176,18 +176,41 @@ tbody tr:hover { background: var(--panel); }
 .wiz-step.active { color: var(--teal); font-weight: 600; }
 .wiz-step.done { color: var(--green); }
 
-.tpl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tpl-title { margin-bottom: 2px !important; }
+.tpl-sub { margin: 0 0 14px; }
+.tpl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 1100px) { .tpl-grid { grid-template-columns: 1fr 1fr; } }
 .tpl-card {
-  display: flex; flex-direction: column; gap: 6px; text-align: left;
-  padding: 14px 16px; border: 1.5px solid var(--line); border-radius: 10px;
-  background: #fff; cursor: pointer; font-size: 13px;
+  display: flex; flex-direction: column; text-align: left;
+  border: 1.5px solid var(--line); border-radius: 10px;
+  background: #fff; cursor: pointer; font-size: 13px; overflow: hidden;
 }
 .tpl-card:hover { border-color: var(--teal); }
+.tpl-card-head {
+  background: var(--panel); padding: 10px 14px;
+  display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
+}
+.tpl-card-head strong { font-size: 15px; }
+.tpl-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; font-size: 12px; color: var(--muted);
+}
+.tpl-card-body {
+  padding: 10px 14px 12px; display: flex; flex-direction: column;
+  gap: 8px; align-items: flex-start; flex: 1;
+}
+.tpl-desc {
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden; font-size: 12px; line-height: 1.45;
+}
 .tpl-doc { text-decoration: none; }
 .tpl-doc:hover { background: #e2e8f0; }
-.tpl-card.selected { border-color: var(--teal); background: #f0fafa; }
-.tpl-card .chip { align-self: flex-start; }
+.tpl-card.selected { border-color: var(--teal); }
 .chip-teal { background: #e6f4f4; border-color: #bfe3e3; color: var(--teal); }
+.graph-picker {
+  border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px;
+  font-size: 13px; font-family: inherit; background: #fff; margin-bottom: 10px;
+}
 
 .form { display: flex; flex-direction: column; gap: 14px; }
 .field { display: flex; flex-direction: column; gap: 5px; font-size: 13px; }

@@ -3,6 +3,13 @@ import { NAME_RE, REPO_RE, SHORTNAME_RE, STATUS_LABEL, shortnameFor,
   defaultConfig, configLabel } from '../../../domain/component.js';
 import { createComponent, retryProvision } from '../../../infrastructure/api/catalogApi.js';
 import { StatusPill } from '../../components/Feedback.jsx';
+import { Ico, ICON } from '../../components/Icons.jsx';
+
+const STEPS = [
+  'Información del componente',
+  'Personalización del componente',
+  'Resumen de confirmación',
+];
 
 export default function ComponentWizard({ template, onClose, onBack, onCreated }) {
   const [step, setStep] = useState(0);
@@ -52,150 +59,152 @@ export default function ComponentWizard({ template, onClose, onBack, onCreated }
     setBusy(false);
   };
 
+  const stepOf = (i) =>
+    `wiz-stepv${result || step > i ? ' done' : step === i ? ' active' : ''}`;
+
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-head">
-          <h2>Nuevo componente</h2>
-          <button className="btn btn-outline" onClick={onClose}>✕</button>
-        </div>
-        <p className="muted" style={{ margin: '0 0 12px' }}>
-          {template.display_name || template.name}{' '}
-          <span className={`chip${template.kind === 'lib' ? '' : ' chip-teal'}`}>{template.kind}</span>
-        </p>
-
-        {!result && (
-          <div className="wiz-steps">
-            {['Información', 'Personalización', 'Resumen'].map((l, i) => (
-              <span key={l} className={`wiz-step${step === i ? ' active' : ''}${step > i ? ' done' : ''}`}>
-                {i + 1}. {l}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {error && <div className="alert-error">{error}</div>}
-
-        {!result && step === 0 && (
-          <div className="form">
-            <label className="field">
-              <span>Nombre del componente *</span>
-              <input value={form.name} placeholder="loans-api"
-                onChange={(e) => setField('name', e.target.value.toLowerCase())} />
-              <small className="muted">Identidad del componente — aparece en el manifest como components[].name</small>
-            </label>
-            <label className="field">
-              <span>Nombre corto del componente *</span>
-              <input value={shortname} placeholder="LOANSAPI"
-                onChange={(e) => { setShortTouched(true); setField('shortname', e.target.value.toUpperCase()); }} />
-              <small className="muted">Solo letras mayúsculas y dígitos — prefija los ids de infra del manifest</small>
-            </label>
-            <label className="field">
-              <span>Descripción *</span>
-              <textarea rows="3" value={form.description}
-                onChange={(e) => setField('description', e.target.value)} />
-              <small className="muted">Descripción funcional del componente</small>
-            </label>
-            <label className="field">
-              <span>Nombre del repositorio *</span>
-              <input value={repoName} placeholder="mi-repo"
-                onChange={(e) => { setRepoTouched(true); setField('repo', e.target.value); }} />
-              <small className="muted">progmise/{repoName || '…'} — nombre libre</small>
-            </label>
-          </div>
-        )}
-
-        {!result && step === 1 && (
-          <div className="form">
-            {(template.fields || []).map((f) => (
-              <label key={f.key} className="field">
-                <span>{f.label}</span>
-                {f.type === 'select'
-                  ? <select value={config[f.key] ?? f.default}
-                      onChange={(e) => setConfig((c) => ({ ...c, [f.key]: e.target.value }))}>
-                      {(f.options || []).map((o) => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
-                      ))}
-                    </select>
-                  : <input value={f.value} readOnly disabled />}
-                {f.key === 'branch_strategy' && (
-                  <small className="muted">
-                    {config[f.key] === 'trunk'
-                      ? 'Se crea solo main protegida'
-                      : 'Se crean main y development protegidas (development = default)'}
-                  </small>
-                )}
-              </label>
-            ))}
-          </div>
-        )}
-
-        {!result && step === 2 && (
-          <div className="summary">
-            <table className="summary-table">
-              <tbody>
-                <tr><td>Componente</td><td><strong>{form.name}</strong></td></tr>
-                <tr><td>Nombre corto</td><td><code>{shortname}</code></td></tr>
-                <tr><td>Repositorio</td><td>progmise/{repoName}</td></tr>
-                <tr><td>Plantilla</td><td>{template.display_name || template.name} <span className="chip">{template.kind}</span></td></tr>
-                <tr><td>Descripción</td><td>{form.description}</td></tr>
-                {(template.fields || []).map((f) => (
-                  <tr key={f.key}>
-                    <td>{f.label}</td>
-                    <td>{f.type === 'fixed' ? f.value : configLabel(template.fields, f.key, config[f.key])}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <p className="muted">
-              Se generará el repositorio desde la plantilla
-              {config.branch_strategy === 'trunk'
-                ? ' con main protegida'
-                : ' con main y development protegidas'}
-              , se configurarán secrets/variables
-              {template.kind === 'app' && ' y se abrirá un PR de registro en deploy-manifest'}.
-            </p>
-          </div>
-        )}
-
-        {result && (
-          <div className="result">
-            <p><StatusPill status={result.status} /></p>
-            <p>
-              <a href={`https://github.com/${result.repo}`} target="_blank" rel="noreferrer">
-                {result.repo} ↗
-              </a>
-              {result.manifest_pr
-                ? <> · <a href={`https://github.com/progmise/deploy-manifest/pull/${result.manifest_pr}`}
-                      target="_blank" rel="noreferrer">PR #{result.manifest_pr} ↗</a></>
-                : null}
-            </p>
-            <ol className="prov-log">
-              {(result.provision_log || []).map((e, i) => (
-                <li key={i} className={e.ok ? '' : 'log-fail'}>
-                  {STATUS_LABEL[e.step] || e.step} {!e.ok && `— ${e.error}`}
-                </li>
+      <div className="modal modal-wiz" onClick={(e) => e.stopPropagation()}>
+        <div className="wiz-cols">
+          <aside className="wiz-side">
+            <span className="wiz-kind">{template.kind === 'lib' ? 'LIB' : 'API'}</span>
+            <div className="wiz-tpl">{template.display_name || template.name}</div>
+            <a className="chip tpl-doc" href={`https://github.com/${template.repo}#readme`}
+              target="_blank" rel="noreferrer">
+              <Ico d={ICON.doc} />Documentación ↗</a>
+            <div className="wiz-steps-v">
+              {STEPS.map((l, i) => (
+                <span key={l} className={stepOf(i)}>
+                  <span className="n">{result || step > i ? '✓' : i + 1}</span>{l}
+                </span>
               ))}
-            </ol>
-          </div>
-        )}
+            </div>
+          </aside>
 
-        <div className="modal-foot">
+          <div className="wiz-main">
+            {error && <div className="alert-error">{error}</div>}
+
+            {!result && step === 0 && (
+              <div className="form">
+                <label className="field">
+                  <span>Nombre del componente *</span>
+                  <input value={form.name} placeholder="ejemplo: awesome-component"
+                    onChange={(e) => setField('name', e.target.value.toLowerCase())} />
+                  <small className="muted">Nombre único del componente</small>
+                </label>
+                <label className="field">
+                  <span>Introduzca un nombre corto para el componente *</span>
+                  <input value={shortname} placeholder="EJEMPLO: AWSMCOM1"
+                    onChange={(e) => { setShortTouched(true); setField('shortname', e.target.value.toUpperCase()); }} />
+                  <small className="muted">Los nombres cortos sólo pueden contener letras mayúsculas y dígitos</small>
+                </label>
+                <label className="field">
+                  <span>Descripción *</span>
+                  <textarea rows="3" value={form.description}
+                    onChange={(e) => setField('description', e.target.value)} />
+                  <small className="muted">Descripción funcional del componente</small>
+                </label>
+                <label className="field">
+                  <span>Nombre del repositorio *</span>
+                  <input value={repoName} placeholder="ejemplo: mi-repositorio"
+                    onChange={(e) => { setRepoTouched(true); setField('repo', e.target.value); }} />
+                  <small className="muted">progmise/{repoName || '…'} — nombre único del repositorio</small>
+                </label>
+              </div>
+            )}
+
+            {!result && step === 1 && (
+              <div className="form">
+                {(template.fields || []).map((f) => (
+                  <label key={f.key} className="field">
+                    <span>{f.label}{f.required === false ? '' : ''}</span>
+                    {f.type === 'select'
+                      ? <select value={config[f.key] ?? f.default}
+                          onChange={(e) => setConfig((c) => ({ ...c, [f.key]: e.target.value }))}>
+                          {(f.options || []).map((o) => (
+                            <option key={o.value} value={o.value}>{o.label}</option>
+                          ))}
+                        </select>
+                      : <input value={f.value} readOnly disabled />}
+                    {f.key === 'branch_strategy' && (
+                      <small className="muted">
+                        {config[f.key] === 'trunk'
+                          ? 'Se crea solo main protegida'
+                          : 'Se crean main y development protegidas (development = default)'}
+                      </small>
+                    )}
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {!result && step === 2 && (
+              <div className="summary">
+                <table className="summary-table">
+                  <tbody>
+                    <tr><td>Nombre de componente:</td><td><strong>{form.name}</strong></td></tr>
+                    <tr><td>Introduzca un nombre corto para el componente:</td><td><code>{shortname}</code></td></tr>
+                    <tr><td>Descripción:</td><td>{form.description}</td></tr>
+                    <tr><td>Nombre del repositorio:</td><td>progmise/{repoName}</td></tr>
+                    {(template.fields || []).map((f) => (
+                      <tr key={f.key}>
+                        <td>{f.label}:</td>
+                        <td>{f.type === 'fixed' ? f.value : configLabel(template.fields, f.key, config[f.key])}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="muted">
+                  Se generará el repositorio desde la plantilla
+                  {config.branch_strategy === 'trunk'
+                    ? ' con main protegida'
+                    : ' con main y development protegidas'}
+                  , se configurarán secrets/variables
+                  {template.kind === 'app' && ' y se abrirá un PR de registro en deploy-manifest'}.
+                </p>
+              </div>
+            )}
+
+            {result && (
+              <div className="result">
+                <p><StatusPill status={result.status} /></p>
+                <p>
+                  <a href={`https://github.com/${result.repo}`} target="_blank" rel="noreferrer">
+                    {result.repo} ↗
+                  </a>
+                  {result.manifest_pr
+                    ? <> · <a href={`https://github.com/progmise/deploy-manifest/pull/${result.manifest_pr}`}
+                          target="_blank" rel="noreferrer">PR #{result.manifest_pr} ↗</a></>
+                    : null}
+                </p>
+                <ol className="prov-log">
+                  {(result.provision_log || []).map((e, i) => (
+                    <li key={i} className={e.ok ? '' : 'log-fail'}>
+                      {STATUS_LABEL[e.step] || e.step} {!e.ok && `— ${e.error}`}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="wiz-foot">
           {!result && (step > 0
-            ? <button className="btn btn-outline" onClick={() => setStep(step - 1)}>Atrás</button>
-            : <button className="btn btn-outline" onClick={onBack}>Atrás</button>)}
-          <span style={{ flex: 1 }} />
+            ? <button className="btn-text btn-cancel" onClick={() => setStep(step - 1)}>Atrás</button>
+            : <button className="btn-text btn-cancel" onClick={onBack}>Cancelar</button>)}
+          {result && <span />}
           {result
             ? result.status === 'failed'
-              ? <button className="btn btn-primary" disabled={busy} onClick={retry}>
+              ? <button className="btn-text btn-next" disabled={busy} onClick={retry}>
                   {busy ? 'Reintentando…' : 'Reintentar'}
                 </button>
-              : <button className="btn btn-primary" onClick={onClose}>Listo</button>
+              : <button className="btn-text btn-next" onClick={onClose}>Listo</button>
             : step < 2
-              ? <button className="btn btn-primary"
+              ? <button className="btn-text btn-next"
                   disabled={step === 0 && (!nameOk || !repoOk || !shortOk || !descOk)}
                   onClick={() => setStep(step + 1)}>Siguiente</button>
-              : <button className="btn btn-primary" disabled={busy} onClick={submit}>
+              : <button className="btn-text btn-next" disabled={busy} onClick={submit}>
                   {busy ? 'Creando…' : 'Crear componente'}
                 </button>}
         </div>

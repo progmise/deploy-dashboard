@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { SearchRow } from '../../components/Feedback.jsx';
-import { Ico } from '../../components/Icons.jsx';
-
-const GRID_ICON = 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z';
-const LIST_ICON = 'M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01';
+import { Ico, ICON } from '../../components/Icons.jsx';
 
 // Template catalog page — the "Nuevo componente" destination. Picking a
 // card opens the stepped wizard (Información → Personalización → Resumen).
@@ -18,14 +15,15 @@ export default function TemplateGallery({ templates, onPick }) {
   const docLink = (t) => (
     <a className="chip tpl-doc" href={`https://github.com/${t.repo}#readme`}
       target="_blank" rel="noreferrer" title="Documentación"
-      onClick={(e) => e.stopPropagation()}>Doc ↗</a>
+      onClick={(e) => e.stopPropagation()}><Ico d={ICON.doc} />Doc</a>
   );
 
   return (
-    <div className="card">
-      <h2 className="tpl-title">Crear un nuevo componente</h2>
-      <p className="muted tpl-sub">Crear un nuevo componente utilizando plantillas</p>
-      <SearchRow q={q} setQ={setQ} placeholder="Buscar plantilla por nombre…"
+    <div className="card tpl-page">
+      <div className="tpl-head">
+        <h2 className="tpl-title">Crear un nuevo componente</h2>
+        <p className="muted tpl-sub">Crear un nuevo componente utilizando plantillas</p>
+        <SearchRow q={q} setQ={setQ} placeholder="Buscar plantilla por nombre…"
         action={
           <>
             <span className="chips" style={{ marginLeft: 'auto' }}>
@@ -38,12 +36,14 @@ export default function TemplateGallery({ templates, onPick }) {
             </span>
             <span className="view-toggle">
               <button className={mode === 'grid' ? 'active' : ''} title="Grilla"
-                onClick={() => setMode('grid')}><Ico d={GRID_ICON} /></button>
+                onClick={() => setMode('grid')}><Ico d={ICON.grid} /></button>
               <button className={mode === 'list' ? 'active' : ''} title="Lista"
-                onClick={() => setMode('list')}><Ico d={LIST_ICON} /></button>
+                onClick={() => setMode('list')}><Ico d={ICON.list} /></button>
             </span>
           </>
         } />
+      </div>
+      <div className="tpl-body">
       {!templates && <p className="muted">Cargando plantillas…</p>}
       {mode === 'grid' ? (
         <div className="tpl-grid">
@@ -80,6 +80,7 @@ export default function TemplateGallery({ templates, onPick }) {
         </table>
       )}
       {templates && !shown.length && <p className="muted">Sin plantillas para ese filtro.</p>}
+      </div>
     </div>
   );
 }

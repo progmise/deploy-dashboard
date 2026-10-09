@@ -19,7 +19,7 @@ const NAV = [
 
 export default function App() {
   const me = useSession();
-  const { manifest, releases, runs, catalog, error, reloadCatalog } = useDashboardData(me);
+  const { manifest, releases, runs, catalog, templates, error, reloadCatalog } = useDashboardData(me);
   const [wizard, setWizard] = useState(false);
   const [view, setView] = useState('releases');
   const [q, setQ] = useState('');
@@ -81,13 +81,13 @@ export default function App() {
             <>
               <div className="card">
                 <h2>Componentes</h2>
-                <SearchRow q={q} setQ={setQ} placeholder="Buscar componente…"
+                <SearchRow q={q} setQ={setQ} placeholder="Buscar por nombre, nombre corto o plantilla…"
                   action={
                     <button className="btn btn-primary" style={{ marginLeft: 'auto' }}
                       onClick={() => setWizard(true)}>Nuevo componente +</button>
                   } />
-                <ComponentsTable manifest={manifest} catalog={catalog} q={lower}
-                  onChanged={reloadCatalog} />
+                <ComponentsTable manifest={manifest} catalog={catalog} templates={templates}
+                  q={lower} onChanged={reloadCatalog} />
               </div>
               <div className="card">
                 <h2>Grafo de dependencias</h2>

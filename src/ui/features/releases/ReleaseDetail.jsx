@@ -85,7 +85,7 @@ export default function ReleaseDetail({ number, onBack }) {
             {release.gh_release_url &&
               <a className="btn btn-outline" href={release.gh_release_url}
                 target="_blank" rel="noreferrer">GitHub ↗</a>}
-            <button className="btn btn-outline" onClick={() => act('refresh', reload)}
+            <button className="btn btn-outline" onClick={reload}
               title="Actualizar Release">
               <Ico d={ICON.refresh} /> Actualizar Release
             </button>

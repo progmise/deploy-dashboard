@@ -183,6 +183,8 @@ tbody tr:hover { background: var(--panel); }
   background: #fff; cursor: pointer; font-size: 13px;
 }
 .tpl-card:hover { border-color: var(--teal); }
+.tpl-doc { text-decoration: none; }
+.tpl-doc:hover { background: #e2e8f0; }
 .tpl-card.selected { border-color: var(--teal); background: #f0fafa; }
 .tpl-card .chip { align-self: flex-start; }
 .chip-teal { background: #e6f4f4; border-color: #bfe3e3; color: var(--teal); }

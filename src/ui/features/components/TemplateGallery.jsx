@@ -42,12 +42,19 @@ export default function TemplateGallery({ templates, onPick }) {
       {mode === 'grid' ? (
         <div className="tpl-grid">
           {shown.map((t) => (
-            <button key={t.name} className="tpl-card" onClick={() => onPick(t)}>
-              <strong>{t.display_name || t.name}</strong>
+            <div key={t.name} className="tpl-card" role="button" tabIndex={0}
+              onClick={() => onPick(t)} onKeyDown={(e) => e.key === 'Enter' && onPick(t)}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <strong>{t.display_name || t.name}</strong>
+                <a className="chip tpl-doc" href={`https://github.com/${t.repo}#readme`}
+                  target="_blank" rel="noreferrer" title="Documentación"
+                  onClick={(e) => e.stopPropagation()}>Doc ↗</a>
+                <span className={`chip${t.kind === 'lib' ? '' : ' chip-teal'}`}
+                  style={{ marginLeft: 'auto' }}>{t.kind}</span>
+              </span>
               <span className="muted">{t.description || '—'}</span>
-              <span className={`chip${t.kind === 'lib' ? '' : ' chip-teal'}`}>{t.kind}</span>
               <span className="muted" style={{ fontSize: 11 }}>{t.name}</span>
-            </button>
+            </div>
           ))}
         </div>
       ) : (
@@ -55,7 +62,10 @@ export default function TemplateGallery({ templates, onPick }) {
           <tbody>
             {shown.map((t) => (
               <tr key={t.name} className="tpl-row" onClick={() => onPick(t)}>
-                <td><strong>{t.display_name || t.name}</strong><br />
+                <td><strong>{t.display_name || t.name}</strong>{' '}
+                  <a className="chip tpl-doc" href={`https://github.com/${t.repo}#readme`}
+                    target="_blank" rel="noreferrer" title="Documentación"
+                    onClick={(e) => e.stopPropagation()}>Doc ↗</a><br />
                   <span className="muted" style={{ fontSize: 12 }}>{t.name}</span></td>
                 <td><span className={`chip${t.kind === 'lib' ? '' : ' chip-teal'}`}>{t.kind}</span></td>
                 <td><span className="muted">{t.description || '—'}</span></td>

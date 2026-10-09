@@ -16,17 +16,17 @@ import MembersView from '../ui/features/team/MembersView.jsx';
 import { useMembers } from '../application/useMembers.js';
 
 const NAV = [
-  { id: 'releases', label: 'Releases', icon: ICON.releases },
   { id: 'componentes', label: 'Componentes', icon: ICON.componentes },
   { id: 'equipo', label: 'Equipo', icon: ICON.equipo },
   { id: 'despliegues', label: 'Despliegues', icon: ICON.despliegues },
+  { id: 'releases', label: 'Releases', icon: ICON.releases },
 ];
 
 export default function App() {
   const me = useSession();
   const { manifest, releases, runs, catalog, templates, error, reloadCatalog } = useDashboardData(me);
   const [wizardTemplate, setWizardTemplate] = useState(null);
-  const [view, setView] = useState('releases');
+  const [view, setView] = useState('componentes');
   const [q, setQ] = useState('');
   const [filters, setFilters] = useState({ plantilla: '', estado: '' });
   const [collapsed, setCollapsed] = useState(false);

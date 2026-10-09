@@ -15,10 +15,16 @@ export default function TemplateGallery({ templates, onPick }) {
     (kind === 'all' || t.kind === kind)
     && (!q || [t.name, t.display_name, t.description].join(' ').toLowerCase().includes(q)));
 
+  const docLink = (t) => (
+    <a className="chip tpl-doc" href={`https://github.com/${t.repo}#readme`}
+      target="_blank" rel="noreferrer" title="Documentación"
+      onClick={(e) => e.stopPropagation()}>Doc ↗</a>
+  );
+
   return (
     <div className="card">
-      <h2>Crear un nuevo componente</h2>
-      <p className="muted">Crear un nuevo componente utilizando plantillas</p>
+      <h2 className="tpl-title">Crear un nuevo componente</h2>
+      <p className="muted tpl-sub">Crear un nuevo componente utilizando plantillas</p>
       <SearchRow q={q} setQ={setQ} placeholder="Buscar plantilla por nombre…"
         action={
           <>
@@ -44,16 +50,18 @@ export default function TemplateGallery({ templates, onPick }) {
           {shown.map((t) => (
             <div key={t.name} className="tpl-card" role="button" tabIndex={0}
               onClick={() => onPick(t)} onKeyDown={(e) => e.key === 'Enter' && onPick(t)}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className="tpl-card-head">
+                <span className="tpl-meta">
+                  {t.kind === 'lib' ? 'Lib' : 'App'}
+                  <span className={`chip${t.kind === 'lib' ? '' : ' chip-teal'}`}>{t.kind}</span>
+                </span>
                 <strong>{t.display_name || t.name}</strong>
-                <a className="chip tpl-doc" href={`https://github.com/${t.repo}#readme`}
-                  target="_blank" rel="noreferrer" title="Documentación"
-                  onClick={(e) => e.stopPropagation()}>Doc ↗</a>
-                <span className={`chip${t.kind === 'lib' ? '' : ' chip-teal'}`}
-                  style={{ marginLeft: 'auto' }}>{t.kind}</span>
-              </span>
-              <span className="muted">{t.description || '—'}</span>
-              <span className="muted" style={{ fontSize: 11 }}>{t.name}</span>
+                {docLink(t)}
+              </div>
+              <div className="tpl-card-body">
+                <span className="muted tpl-desc">{t.description || '—'}</span>
+                <span className="chip">{t.name}</span>
+              </div>
             </div>
           ))}
         </div>
@@ -62,10 +70,7 @@ export default function TemplateGallery({ templates, onPick }) {
           <tbody>
             {shown.map((t) => (
               <tr key={t.name} className="tpl-row" onClick={() => onPick(t)}>
-                <td><strong>{t.display_name || t.name}</strong>{' '}
-                  <a className="chip tpl-doc" href={`https://github.com/${t.repo}#readme`}
-                    target="_blank" rel="noreferrer" title="Documentación"
-                    onClick={(e) => e.stopPropagation()}>Doc ↗</a><br />
+                <td><strong>{t.display_name || t.name}</strong>{' '}{docLink(t)}<br />
                   <span className="muted" style={{ fontSize: 12 }}>{t.name}</span></td>
                 <td><span className={`chip${t.kind === 'lib' ? '' : ' chip-teal'}`}>{t.kind}</span></td>
                 <td><span className="muted">{t.description || '—'}</span></td>
@@ -78,4 +83,3 @@ export default function TemplateGallery({ templates, onPick }) {
     </div>
   );
 }
-

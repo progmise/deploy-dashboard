@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { mergeCatalog } from '../../../domain/component.js';
 import { retryProvision } from '../../../infrastructure/api/catalogApi.js';
 import { StatusPill } from '../../components/Feedback.jsx';
@@ -18,6 +18,8 @@ const COLUMNS = [
 
 export default function ComponentsTable({ manifest, catalog, templates = [], q, filters, onChanged }) {
   const [sort, setSort] = useState({ key: 'name', dir: 1 });
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const tplName = (t) => templates.find((x) => x.name === t)?.display_name || t;
   const kindOf = (name) => templates.find((t) => t.name === name)?.kind;
 
@@ -46,6 +48,14 @@ export default function ComponentsTable({ manifest, catalog, templates = [], q, 
   const arrow = (key) =>
     sort.key !== key ? ' ⇅' : sort.dir === 1 ? ' ↑' : ' ↓';
 
+  // Reset to page 1 whenever the visible set changes (search/filters/size).
+  useEffect(() => setPage(1), [q, filters, pageSize]);
+  const pages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const safePage = Math.min(page, pages);
+  const visible = rows.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const from = rows.length ? (safePage - 1) * pageSize + 1 : 0;
+  const to = (safePage - 1) * pageSize + visible.length;
+
   return (
     <>
       <p className="tbl-legend">Visualización de los componentes</p>
@@ -62,7 +72,7 @@ export default function ComponentsTable({ manifest, catalog, templates = [], q, 
           </tr>
         </thead>
         <tbody>
-          {rows.map((c) => {
+          {visible.map((c) => {
             const kind = c.db ? kindOf(c.db.template) : 'app';
             return (
               <tr key={c.name}>
@@ -96,6 +106,21 @@ export default function ComponentsTable({ manifest, catalog, templates = [], q, 
         </tbody>
       </table>
       {!rows.length && <p className="muted">Sin componentes para ese filtro.</p>}
+      <div className="tbl-foot">
+        <select className="page-size" value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}>
+          {[10, 25, 50].map((n) => <option key={n} value={n}>{n}</option>)}
+        </select>
+        <span className="pager">
+          <span className="muted">{from} a {to} de {rows.length} Elementos</span>
+          <button disabled={safePage <= 1} onClick={() => setPage(safePage - 1)}>‹ Ant</button>
+          {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
+            <button key={p} className={p === safePage ? 'active' : ''}
+              onClick={() => setPage(p)}>{p}</button>
+          ))}
+          <button disabled={safePage >= pages} onClick={() => setPage(safePage + 1)}>Sig ›</button>
+        </span>
+      </div>
     </>
   );
 }

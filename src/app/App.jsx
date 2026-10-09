@@ -5,7 +5,9 @@ import { filter } from '../domain/component.js';
 import { CenterCard, SearchRow } from '../ui/components/Feedback.jsx';
 import { Ico, ICON } from '../ui/components/Icons.jsx';
 import { Login, Unauthorized, UserMenu } from '../ui/features/session/Gate.jsx';
-import ReleasesTable from '../ui/features/releases/ReleasesTable.jsx';
+import ReleasesView from '../ui/features/releases/ReleasesView.jsx';
+import ReleaseDetail from '../ui/features/releases/ReleaseDetail.jsx';
+import { useReleases } from '../application/useReleases.js';
 import ComponentsTable from '../ui/features/components/ComponentsTable.jsx';
 import FiltersMenu from '../ui/features/components/FiltersMenu.jsx';
 import DependencyGraph from '../ui/features/components/DependencyGraph.jsx';
@@ -24,13 +26,15 @@ const NAV = [
 
 export default function App() {
   const me = useSession();
-  const { manifest, releases, runs, catalog, templates, error, reloadCatalog } = useDashboardData(me);
+  const { manifest, runs, catalog, templates, error, reloadCatalog } = useDashboardData(me);
   const [wizardTemplate, setWizardTemplate] = useState(null);
   const [view, setView] = useState('componentes');
+  const [releaseNo, setReleaseNo] = useState(null);
   const [q, setQ] = useState('');
   const [filters, setFilters] = useState({ plantilla: '', estado: '' });
   const [collapsed, setCollapsed] = useState(false);
   const { members, reload: reloadMembers } = useMembers(view === 'equipo');
+  const { releases, reload: reloadReleases } = useReleases(view === 'releases');
 
   if (me === undefined) return <CenterCard title="Deploy Orchestrator" sub="Cargando…" />;
   if (me?.forbidden) return <Unauthorized />;
@@ -40,7 +44,9 @@ export default function App() {
 
   const viewLabel = view === 'nuevo-componente'
     ? 'Componentes / Nuevo componente'
-    : NAV.find((n) => n.id === view)?.label || '';
+    : view === 'release-detail'
+      ? 'Releases / Detalle'
+      : NAV.find((n) => n.id === view)?.label || '';
   const lower = q.toLowerCase();
 
   return (
@@ -77,16 +83,13 @@ export default function App() {
         <div className="content">
 
           {view === 'releases' && (
-            <div className="card">
-              <h2>Lista de releases</h2>
-              <SearchRow q={q} setQ={setQ} placeholder="Buscar por nombre o versión…"
-                action={
-                  <a className="btn btn-primary" style={{ marginLeft: 'auto' }}
-                     href="https://github.com/progmise/deploy-manifest/actions/workflows/release.yml"
-                     target="_blank" rel="noreferrer">Nueva release +</a>
-                } />
-              <ReleasesTable items={filter(releases, lower, ['name', 'tag_name'])} />
-            </div>
+            <ReleasesView releases={releases} onChanged={reloadReleases}
+              onOpen={(n) => { setReleaseNo(n); setView('release-detail'); }} />
+          )}
+
+          {view === 'release-detail' && (
+            <ReleaseDetail number={releaseNo}
+              onBack={() => { setView('releases'); reloadReleases(); }} />
           )}
 
           {view === 'componentes' && (

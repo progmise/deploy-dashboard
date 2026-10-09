@@ -49,6 +49,7 @@ export default function ComponentsTable({ manifest, catalog, templates = [], q, 
     sort.key !== key ? ' ⇅' : sort.dir === 1 ? ' ↑' : ' ↓';
 
   // Reset to page 1 whenever the visible set changes (search/filters/size).
+  // oxlint-disable-next-line react-hooks/set-state-in-effect — deliberate reset
   useEffect(() => setPage(1), [q, filters, pageSize]);
   const pages = Math.max(1, Math.ceil(rows.length / pageSize));
   const safePage = Math.min(page, pages);

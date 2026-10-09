@@ -9,10 +9,6 @@ export async function getManifest() {
   return yaml.load(text);
 }
 
-export function getReleases() {
-  return apiGet(`/api/gh/repos/${MANIFEST_REPO}/releases?per_page=20`);
-}
-
 export function getOrchRuns() {
   return apiGet(
     `/api/gh/repos/${MANIFEST_REPO}/actions/workflows/deploy.yml/runs?per_page=10`,

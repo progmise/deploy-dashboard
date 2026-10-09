@@ -20,3 +20,11 @@ export function createComponent(body) {
 export function retryProvision(name) {
   return apiSend(`/api/components/${encodeURIComponent(name)}/provision`, 'POST');
 }
+
+export function getMembers() {
+  return apiGet('/api/members');
+}
+
+export function createMember(body) {
+  return apiSend('/api/members', 'POST', body);
+}

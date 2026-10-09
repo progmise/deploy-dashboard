@@ -12,10 +12,13 @@ import DependencyGraph from '../ui/features/components/DependencyGraph.jsx';
 import ComponentWizard from '../ui/features/components/ComponentWizard.jsx';
 import TemplateGallery from '../ui/features/components/TemplateGallery.jsx';
 import OrchRuns from '../ui/features/deployments/OrchRuns.jsx';
+import MembersView from '../ui/features/team/MembersView.jsx';
+import { useMembers } from '../application/useMembers.js';
 
 const NAV = [
   { id: 'releases', label: 'Releases', icon: ICON.releases },
   { id: 'componentes', label: 'Componentes', icon: ICON.componentes },
+  { id: 'equipo', label: 'Equipo', icon: ICON.equipo },
   { id: 'despliegues', label: 'Despliegues', icon: ICON.despliegues },
 ];
 
@@ -27,6 +30,7 @@ export default function App() {
   const [q, setQ] = useState('');
   const [filters, setFilters] = useState({ plantilla: '', estado: '' });
   const [collapsed, setCollapsed] = useState(false);
+  const { members, reload: reloadMembers } = useMembers(view === 'equipo');
 
   if (me === undefined) return <CenterCard title="Deploy Orchestrator" sub="Cargando…" />;
   if (me?.forbidden) return <Unauthorized />;
@@ -107,6 +111,10 @@ export default function App() {
                 <DependencyGraph components={manifest.components} />
               </div>
             </>
+          )}
+
+          {view === 'equipo' && (
+            <MembersView members={members} onChanged={reloadMembers} />
           )}
 
           {view === 'nuevo-componente' && (

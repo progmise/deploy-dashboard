@@ -7,6 +7,7 @@ import { Ico, ICON } from '../ui/components/Icons.jsx';
 import { Login, Unauthorized, UserMenu } from '../ui/features/session/Gate.jsx';
 import ReleasesTable from '../ui/features/releases/ReleasesTable.jsx';
 import ComponentsTable from '../ui/features/components/ComponentsTable.jsx';
+import FiltersMenu from '../ui/features/components/FiltersMenu.jsx';
 import DependencyGraph from '../ui/features/components/DependencyGraph.jsx';
 import ComponentWizard from '../ui/features/components/ComponentWizard.jsx';
 import TemplateGallery from '../ui/features/components/TemplateGallery.jsx';
@@ -24,6 +25,7 @@ export default function App() {
   const [wizardTemplate, setWizardTemplate] = useState(null);
   const [view, setView] = useState('releases');
   const [q, setQ] = useState('');
+  const [filters, setFilters] = useState({ plantilla: '', estado: '' });
 
   if (me === undefined) return <CenterCard title="Deploy Orchestrator" sub="Cargando…" />;
   if (me?.forbidden) return <Unauthorized />;
@@ -83,14 +85,19 @@ export default function App() {
           {view === 'componentes' && (
             <>
               <div className="card">
-                <h2>Componentes</h2>
-                <SearchRow q={q} setQ={setQ} placeholder="Buscar por nombre, nombre corto o plantilla…"
+                <h2>Buscar componente</h2>
+                <SearchRow q={q} setQ={setQ} placeholder="Mi componente favorito"
                   action={
-                    <button className="btn btn-primary" style={{ marginLeft: 'auto' }}
-                      onClick={() => { setView('nuevo-componente'); setQ(''); }}>Nuevo componente +</button>
+                    <>
+                      <FiltersMenu templates={templates} filters={filters} setFilters={setFilters} />
+                      <button className="btn btn-primary" style={{ marginLeft: 'auto' }}
+                        onClick={() => { setView('nuevo-componente'); setQ(''); }}>Nuevo componente +</button>
+                    </>
                   } />
+                <p className="muted" style={{ fontSize: 12, margin: '-8px 0 14px' }}>
+                  Buscar por nombre, nombre corto o plantilla</p>
                 <ComponentsTable manifest={manifest} catalog={catalog} templates={templates}
-                  q={lower} onChanged={reloadCatalog} />
+                  q={lower} filters={filters} onChanged={reloadCatalog} />
               </div>
               <div className="card">
                 <h2>Grafo de dependencias</h2>

@@ -249,6 +249,25 @@ tbody tr:hover { background: var(--panel); }
 .tpl-doc:hover { background: #e2e8f0; }
 .tpl-card.selected { border-color: var(--teal); }
 .chip-teal { background: #e6f4f4; border-color: #bfe3e3; color: var(--teal); }
+/* --- Sortable table headers + filters --- */
+.tbl-legend { font-size: 12.5px; font-weight: 600; color: var(--text); margin: 4px 0 8px; }
+.th-sort { cursor: pointer; user-select: none; }
+.th-sort:hover { color: var(--teal); }
+.sort-arrow { font-weight: 400; }
+.filters-menu { position: relative; display: inline-flex; }
+.filters-menu .btn { padding: 7px 16px; }
+.filters-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; height: 16px; border-radius: 999px;
+  background: var(--teal); color: #fff; font-size: 10px; padding: 0 4px;
+}
+.filters-pop {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 20;
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+  background: #fff; border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px; min-width: 220px; box-shadow: 0 8px 24px rgba(15,23,42,.12);
+}
+
 .graph-picker {
   display: block; border: 1px solid var(--line); border-radius: 8px;
   padding: 7px 12px; font-size: 13px; font-family: inherit;

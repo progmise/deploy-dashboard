@@ -98,6 +98,12 @@ tbody tr:hover { background: var(--panel); }
 .tools { display: inline-flex; gap: 10px; align-items: center; }
 .tools a { color: var(--muted); display: inline-flex; }
 .tools a:hover { color: var(--text); }
+.view-toggle { display: inline-flex; margin-left: 10px; border: 1px solid var(--line, #dfe5ee); border-radius: 8px; overflow: hidden; }
+.view-toggle button { background: #fff; border: none; padding: 6px 10px; cursor: pointer; color: var(--muted); }
+.view-toggle button.active { background: #eef1f6; color: var(--text); }
+.view-toggle svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+.tpl-row { cursor: pointer; }
+.tpl-row:hover td { background: #f4f7fb; }
 .chip {
   padding: 2px 12px; border-radius: 999px; font-size: 12px;
   background: #eef1f6; border: 1px solid #dfe5ee; color: #475569;

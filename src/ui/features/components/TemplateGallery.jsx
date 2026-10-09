@@ -4,6 +4,7 @@ import { Ico } from '../../components/Icons.jsx';
 
 const GRID_ICON = 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z';
 const LIST_ICON = 'M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01';
+const DOC_ICON = 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8';
 
 // Template catalog page — the "Nuevo componente" destination. Picking a
 // card opens the stepped wizard (Información → Personalización → Resumen).
@@ -18,7 +19,7 @@ export default function TemplateGallery({ templates, onPick }) {
   const docLink = (t) => (
     <a className="chip tpl-doc" href={`https://github.com/${t.repo}#readme`}
       target="_blank" rel="noreferrer" title="Documentación"
-      onClick={(e) => e.stopPropagation()}>Doc ↗</a>
+      onClick={(e) => e.stopPropagation()}><Ico d={DOC_ICON} />Doc</a>
   );
 
   return (

@@ -3,6 +3,7 @@ import { NAME_RE, REPO_RE, SHORTNAME_RE, STATUS_LABEL, shortnameFor,
   defaultConfig, configLabel } from '../../../domain/component.js';
 import { createComponent, retryProvision } from '../../../infrastructure/api/catalogApi.js';
 import { StatusPill } from '../../components/Feedback.jsx';
+import { Ico } from '../../components/Icons.jsx';
 
 const STEPS = [
   'Información del componente',
@@ -69,7 +70,8 @@ export default function ComponentWizard({ template, onClose, onBack, onCreated }
             <span className="wiz-kind">{template.kind === 'lib' ? 'LIB' : 'API'}</span>
             <div className="wiz-tpl">{template.display_name || template.name}</div>
             <a className="chip tpl-doc" href={`https://github.com/${template.repo}#readme`}
-              target="_blank" rel="noreferrer">Documentación ↗</a>
+              target="_blank" rel="noreferrer">
+              <Ico d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8" />Documentación ↗</a>
             <div className="wiz-steps-v">
               {STEPS.map((l, i) => (
                 <span key={l} className={stepOf(i)}>

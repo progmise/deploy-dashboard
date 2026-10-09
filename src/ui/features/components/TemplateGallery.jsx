@@ -22,10 +22,11 @@ export default function TemplateGallery({ templates, onPick }) {
   );
 
   return (
-    <div className="card">
-      <h2 className="tpl-title">Crear un nuevo componente</h2>
-      <p className="muted tpl-sub">Crear un nuevo componente utilizando plantillas</p>
-      <SearchRow q={q} setQ={setQ} placeholder="Buscar plantilla por nombre…"
+    <div className="card tpl-page">
+      <div className="tpl-head">
+        <h2 className="tpl-title">Crear un nuevo componente</h2>
+        <p className="muted tpl-sub">Crear un nuevo componente utilizando plantillas</p>
+        <SearchRow q={q} setQ={setQ} placeholder="Buscar plantilla por nombre…"
         action={
           <>
             <span className="chips" style={{ marginLeft: 'auto' }}>
@@ -44,6 +45,8 @@ export default function TemplateGallery({ templates, onPick }) {
             </span>
           </>
         } />
+      </div>
+      <div className="tpl-body">
       {!templates && <p className="muted">Cargando plantillas…</p>}
       {mode === 'grid' ? (
         <div className="tpl-grid">
@@ -80,6 +83,7 @@ export default function TemplateGallery({ templates, onPick }) {
         </table>
       )}
       {templates && !shown.length && <p className="muted">Sin plantillas para ese filtro.</p>}
+      </div>
     </div>
   );
 }

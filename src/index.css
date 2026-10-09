@@ -210,8 +210,12 @@ tbody tr:hover { background: var(--panel); }
 .btn-next { color: var(--teal); }
 .btn-text:disabled { color: #b9c4cf; cursor: default; }
 
-.tpl-title { margin-bottom: 2px !important; }
-.tpl-sub { margin: 0 0 14px; }
+.tpl-page { padding: 0; overflow: hidden; }
+.tpl-head { background: var(--panel); padding: 16px 24px 14px; }
+.tpl-head .search-row { margin-bottom: 0; }
+.tpl-body { padding: 18px 24px; }
+.tpl-title { margin-bottom: 8px !important; }
+.tpl-sub { margin: 0 0 18px; font-size: 12.5px; }
 .tpl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 @media (max-width: 1100px) { .tpl-grid { grid-template-columns: 1fr 1fr; } }
 .tpl-card {

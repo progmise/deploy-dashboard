@@ -180,7 +180,7 @@ tbody tr:hover { background: var(--panel); }
 }
 .wiz-kind { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
 .wiz-tpl { font-weight: 700; font-size: 15px; }
-.wiz-main { flex: 1; padding: 20px 24px; overflow-y: auto; max-height: 70vh; }
+.wiz-main { flex: 1; padding: 20px 24px; overflow-y: auto; max-height: 70vh; background: var(--panel); }
 .wiz-steps-v { margin-top: 26px; display: flex; flex-direction: column; }
 .wiz-stepv {
   display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px;
@@ -202,7 +202,7 @@ tbody tr:hover { background: var(--panel); }
 .wiz-stepv.done { color: var(--text); }
 .wiz-stepv.done .n { background: var(--teal); border-color: var(--teal); color: #fff; }
 .wiz-foot {
-  display: flex; justify-content: space-between; align-items: center;
+  display: grid; grid-template-columns: 1fr 1fr; justify-items: center;
   padding: 12px 24px; border-top: 1px solid var(--line); background: #fff;
 }
 .btn-text { background: none; border: none; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; padding: 6px 10px; }
@@ -258,7 +258,8 @@ tbody tr:hover { background: var(--panel); }
 
 .summary-table { width: 100%; margin-bottom: 12px; }
 .summary-table td { padding: 7px 10px; border-bottom: 1px solid var(--line); font-size: 13px; }
-.summary-table td:first-child { color: var(--muted); width: 140px; }
+.summary-table td:first-child { color: var(--text); font-weight: 600; }
+.summary-table td:last-child { text-align: right; }
 
 .alert-error {
   background: #fbdede; color: #b42318; border-radius: 8px;

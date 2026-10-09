@@ -18,18 +18,22 @@ src/
                              mergeCatalog (manifest ⨝ catalog), filter
   application/               use cases as hooks:
     useSession.js            signed-in user + auth:required listener
-    useDashboardData.js      manifest + releases + runs + catalog reload
+    useDashboardData.js      manifest + runs + catalog reload
     useComponentRuns.js      last deploy runs of one repo
+    useMembers.js            team registry (loads on Equipo view)
+    useReleases.js           RLSE registry list + detail w/ run refresh
   infrastructure/api/        the ONLY fetch boundary:
     client.js                apiGet (401 → auth:required event) + apiSend
     sessionApi.js            /api/me
     githubApi.js             /api/gh/* proxy + /api/manifest
-    catalogApi.js            /api/templates, /api/components*
+    catalogApi.js            /api/templates, /api/components*, /api/members,
+                             /api/releases* (RLSE list/create/detail/
+                             publish/deploy — server-side GitHub actions)
   ui/
     components/              shared presentational (Feedback, Icons)
     features/
       session/Gate.jsx       Login / Unauthorized / UserMenu
-      releases/ReleasesTable.jsx
+      releases/ReleasesView.jsx, ReleaseDetail.jsx
       components/            ComponentsTable, ComponentRuns,
                              DependencyGraph (mermaid), ComponentWizard —
                              4 steps; "Personalización" renders the

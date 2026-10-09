@@ -3,27 +3,38 @@ import { useSession } from '../application/useSession.js';
 import { useDashboardData } from '../application/useDashboardData.js';
 import { filter } from '../domain/component.js';
 import { CenterCard, SearchRow } from '../ui/components/Feedback.jsx';
-import { Ico } from '../ui/components/Icons.jsx';
+import { Ico, ICON } from '../ui/components/Icons.jsx';
 import { Login, Unauthorized, UserMenu } from '../ui/features/session/Gate.jsx';
-import ReleasesTable from '../ui/features/releases/ReleasesTable.jsx';
+import ReleasesView from '../ui/features/releases/ReleasesView.jsx';
+import ReleaseDetail from '../ui/features/releases/ReleaseDetail.jsx';
+import { useReleases } from '../application/useReleases.js';
 import ComponentsTable from '../ui/features/components/ComponentsTable.jsx';
+import FiltersMenu from '../ui/features/components/FiltersMenu.jsx';
 import DependencyGraph from '../ui/features/components/DependencyGraph.jsx';
 import ComponentWizard from '../ui/features/components/ComponentWizard.jsx';
 import TemplateGallery from '../ui/features/components/TemplateGallery.jsx';
 import OrchRuns from '../ui/features/deployments/OrchRuns.jsx';
+import MembersView from '../ui/features/team/MembersView.jsx';
+import { useMembers } from '../application/useMembers.js';
 
 const NAV = [
-  { id: 'releases', label: 'Releases', icon: 'M20.59 13.41 12 22 2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z M7 7h.01' },
-  { id: 'componentes', label: 'Componentes', icon: 'M21 8 12 3 3 8v8l9 5 9-5V8z M3 8l9 5 9-5 M12 13v8' },
-  { id: 'despliegues', label: 'Despliegues', icon: 'M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z' },
+  { id: 'componentes', label: 'Componentes', icon: ICON.componentes },
+  { id: 'equipo', label: 'Equipo', icon: ICON.equipo },
+  { id: 'despliegues', label: 'Despliegues', icon: ICON.despliegues },
+  { id: 'releases', label: 'Releases', icon: ICON.releases },
 ];
 
 export default function App() {
   const me = useSession();
-  const { manifest, releases, runs, catalog, templates, error, reloadCatalog } = useDashboardData(me);
+  const { manifest, runs, catalog, templates, error, reloadCatalog } = useDashboardData(me);
   const [wizardTemplate, setWizardTemplate] = useState(null);
-  const [view, setView] = useState('releases');
+  const [view, setView] = useState('componentes');
+  const [releaseNo, setReleaseNo] = useState(null);
   const [q, setQ] = useState('');
+  const [filters, setFilters] = useState({ plantilla: '', estado: '' });
+  const [collapsed, setCollapsed] = useState(false);
+  const { members, reload: reloadMembers } = useMembers(view === 'equipo');
+  const { releases, reload: reloadReleases } = useReleases(view === 'releases');
 
   if (me === undefined) return <CenterCard title="Deploy Orchestrator" sub="Cargando…" />;
   if (me?.forbidden) return <Unauthorized />;
@@ -33,14 +44,16 @@ export default function App() {
 
   const viewLabel = view === 'nuevo-componente'
     ? 'Componentes / Nuevo componente'
-    : NAV.find((n) => n.id === view)?.label || '';
+    : view === 'release-detail'
+      ? 'Releases / Detalle'
+      : NAV.find((n) => n.id === view)?.label || '';
   const lower = q.toLowerCase();
 
   return (
     <>
       <div className="topbar">
         <span className="logo">
-          <Ico d="M12 2 2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5" />
+          <Ico d={ICON.logo} />
           ORCHESTRATOR
         </span>
         <span className="title">{viewLabel}</span>
@@ -57,46 +70,54 @@ export default function App() {
         </span>
       </div>
       <div className="layout">
-        <nav className="sidebar">
+        <nav className={`sidebar${collapsed ? ' collapsed' : ''}`}>
           {NAV.map((n) => (
-            <a key={n.id} className={view === n.id ? 'active' : ''}
+            <a key={n.id} className={view === n.id ? 'active' : ''} title={n.label}
                onClick={() => { setView(n.id); setQ(''); }}>
-              <Ico d={n.icon} />{n.label}
+              <Ico d={n.icon} />{!collapsed && n.label}
             </a>
           ))}
+          <button className="sidebar-toggle" onClick={() => setCollapsed((c) => !c)}
+            title={collapsed ? 'Expandir' : 'Colapsar'}>{collapsed ? '›' : '‹'}</button>
         </nav>
         <div className="content">
 
           {view === 'releases' && (
-            <div className="card">
-              <h2>Lista de releases</h2>
-              <SearchRow q={q} setQ={setQ} placeholder="Buscar por nombre o versión…"
-                action={
-                  <a className="btn btn-primary" style={{ marginLeft: 'auto' }}
-                     href="https://github.com/progmise/deploy-manifest/actions/workflows/release.yml"
-                     target="_blank" rel="noreferrer">Nueva release +</a>
-                } />
-              <ReleasesTable items={filter(releases, lower, ['name', 'tag_name'])} />
-            </div>
+            <ReleasesView releases={releases} onChanged={reloadReleases}
+              onOpen={(n) => { setReleaseNo(n); setView('release-detail'); }} />
+          )}
+
+          {view === 'release-detail' && (
+            <ReleaseDetail number={releaseNo}
+              onBack={() => { setView('releases'); reloadReleases(); }} />
           )}
 
           {view === 'componentes' && (
             <>
               <div className="card">
-                <h2>Componentes</h2>
-                <SearchRow q={q} setQ={setQ} placeholder="Buscar por nombre, nombre corto o plantilla…"
+                <h2>Buscar componente</h2>
+                <SearchRow q={q} setQ={setQ} placeholder="Mi componente favorito"
                   action={
-                    <button className="btn btn-primary" style={{ marginLeft: 'auto' }}
-                      onClick={() => { setView('nuevo-componente'); setQ(''); }}>Nuevo componente +</button>
+                    <>
+                      <FiltersMenu templates={templates} filters={filters} setFilters={setFilters} />
+                      <button className="btn btn-primary" style={{ marginLeft: 'auto' }}
+                        onClick={() => { setView('nuevo-componente'); setQ(''); }}>Nuevo componente +</button>
+                    </>
                   } />
+                <p className="muted" style={{ fontSize: 12, margin: '-8px 0 14px' }}>
+                  Buscar por nombre, nombre corto o plantilla</p>
                 <ComponentsTable manifest={manifest} catalog={catalog} templates={templates}
-                  q={lower} onChanged={reloadCatalog} />
+                  q={lower} filters={filters} onChanged={reloadCatalog} />
               </div>
               <div className="card">
                 <h2>Grafo de dependencias</h2>
                 <DependencyGraph components={manifest.components} />
               </div>
             </>
+          )}
+
+          {view === 'equipo' && (
+            <MembersView members={members} onChanged={reloadMembers} />
           )}
 
           {view === 'nuevo-componente' && (

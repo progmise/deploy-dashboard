@@ -31,7 +31,8 @@ export default function ComponentsTable({ manifest, catalog, templates = [], q, 
               <td><strong>{c.name}</strong></td>
               <td><code>{c.db?.shortname || '—'}</code></td>
               <td>{c.db
-                ? <>{c.db.template}{' '}<span className={`chip${kind === 'lib' ? '' : ' chip-teal'}`}>{kind || '?'}</span></>
+                ? <>{templates.find((t) => t.name === c.db.template)?.display_name || c.db.template}{' '}
+                    <span className={`chip${kind === 'lib' ? '' : ' chip-teal'}`}>{kind || '?'}</span></>
                 : <span className="muted">—</span>}</td>
               <td><a href={`https://github.com/${c.repo}`} target="_blank" rel="noreferrer">{c.repo}</a></td>
               <td><code>{c.tag}</code></td>

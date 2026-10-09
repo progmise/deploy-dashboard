@@ -31,7 +31,10 @@ src/
       session/Gate.jsx       Login / Unauthorized / UserMenu
       releases/ReleasesTable.jsx
       components/            ComponentsTable, ComponentRuns,
-                             DependencyGraph (mermaid), ComponentWizard
+                             DependencyGraph (mermaid), ComponentWizard —
+                             4 steps; "Personalización" renders the
+                             template's `fields` (select/fixed) from
+                             /api/templates, answers go to components.config
       deployments/OrchRuns.jsx
 server/index.js              Express — serves dist/ + /api/*, OAuth, proxies
                              /api/gh → GitHub, /api/manifest, /api/templates,

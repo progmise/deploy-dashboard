@@ -171,10 +171,44 @@ tbody tr:hover { background: var(--panel); }
 .modal-head .btn { padding: 4px 12px; }
 .modal-foot { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
 
-.wiz-steps { display: flex; gap: 18px; margin-bottom: 18px; }
-.wiz-step { font-size: 13px; color: var(--muted); }
-.wiz-step.active { color: var(--teal); font-weight: 600; }
-.wiz-step.done { color: var(--green); }
+/* --- Wizard (Gluon two-pane) --- */
+.modal-wiz { padding: 0; overflow: hidden; width: min(720px, 94vw); display: flex; flex-direction: column; }
+.wiz-cols { display: flex; min-height: 0; }
+.wiz-side {
+  width: 240px; flex-shrink: 0; background: var(--panel);
+  padding: 20px 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+}
+.wiz-kind { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
+.wiz-tpl { font-weight: 700; font-size: 15px; }
+.wiz-main { flex: 1; padding: 20px 24px; overflow-y: auto; max-height: 70vh; }
+.wiz-steps-v { margin-top: 26px; display: flex; flex-direction: column; }
+.wiz-stepv {
+  display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px;
+  color: var(--muted); position: relative; padding-bottom: 28px;
+}
+.wiz-stepv:last-child { padding-bottom: 0; }
+.wiz-stepv:not(:last-child)::before {
+  content: ''; position: absolute; left: 11px; top: 24px; bottom: 2px;
+  width: 1.5px; background: #b9c4cf;
+}
+.wiz-stepv.done:not(:last-child)::before { background: var(--teal); }
+.wiz-stepv .n {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  border: 1.5px solid #b9c4cf; background: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 11px;
+}
+.wiz-stepv.active { color: var(--text); font-weight: 600; }
+.wiz-stepv.active .n { background: var(--red); border-color: var(--red); color: #fff; }
+.wiz-stepv.done { color: var(--text); }
+.wiz-stepv.done .n { background: var(--teal); border-color: var(--teal); color: #fff; }
+.wiz-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 24px; border-top: 1px solid var(--line); background: #fff;
+}
+.btn-text { background: none; border: none; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; padding: 6px 10px; }
+.btn-cancel { color: var(--red); }
+.btn-next { color: var(--teal); }
+.btn-text:disabled { color: #b9c4cf; cursor: default; }
 
 .tpl-title { margin-bottom: 2px !important; }
 .tpl-sub { margin: 0 0 14px; }
@@ -215,11 +249,12 @@ tbody tr:hover { background: var(--panel); }
 .form { display: flex; flex-direction: column; gap: 14px; }
 .field { display: flex; flex-direction: column; gap: 5px; font-size: 13px; }
 .field span { font-weight: 600; }
-.field input, .field textarea {
+.field input, .field textarea, .field select {
   border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px;
   font-size: 13px; font-family: inherit; resize: vertical;
 }
-.field input:focus, .field textarea:focus { outline: none; border-color: var(--teal); }
+.field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--teal); }
+.field input:disabled { background: var(--panel); color: var(--muted); }
 
 .summary-table { width: 100%; margin-bottom: 12px; }
 .summary-table td { padding: 7px 10px; border-bottom: 1px solid var(--line); font-size: 13px; }

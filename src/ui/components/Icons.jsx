@@ -4,6 +4,12 @@ export const GhIcon = (
   </svg>
 );
 
+export const PrIcon = (
+  <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true">
+    <path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.35-.97a.75.75 0 0 1 .22-.53l2-2a.75.75 0 0 1 1.06 0l2 2a.75.75 0 0 1-1.06 1.06l-.72-.72v5.628a2.251 2.251 0 1 1-1.5 0V4.28l-.72.72a.75.75 0 0 1-1.28-.53Z"/>
+  </svg>
+);
+
 export const Ico = ({ d }) => (
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d={d} strokeLinecap="round" strokeLinejoin="round" /></svg>
 );

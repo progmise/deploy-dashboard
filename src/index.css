@@ -95,6 +95,15 @@ tbody tr:hover { background: var(--panel); }
 .pill.outline { background: #fff; border: 1px solid #cfd8e3; color: var(--text);
   font-weight: 500; }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.tools { display: inline-flex; gap: 10px; align-items: center; }
+.tools a { color: var(--muted); display: inline-flex; }
+.tools a:hover { color: var(--text); }
+.view-toggle { display: inline-flex; margin-left: 10px; border: 1px solid var(--line, #dfe5ee); border-radius: 8px; overflow: hidden; }
+.view-toggle button { background: #fff; border: none; padding: 6px 10px; cursor: pointer; color: var(--muted); }
+.view-toggle button.active { background: #eef1f6; color: var(--text); }
+.view-toggle svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+.tpl-row { cursor: pointer; }
+.tpl-row:hover td { background: #f4f7fb; }
 .chip {
   padding: 2px 12px; border-radius: 999px; font-size: 12px;
   background: #eef1f6; border: 1px solid #dfe5ee; color: #475569;
@@ -174,6 +183,8 @@ tbody tr:hover { background: var(--panel); }
   background: #fff; cursor: pointer; font-size: 13px;
 }
 .tpl-card:hover { border-color: var(--teal); }
+.tpl-doc { text-decoration: none; }
+.tpl-doc:hover { background: #e2e8f0; }
 .tpl-card.selected { border-color: var(--teal); background: #f0fafa; }
 .tpl-card .chip { align-self: flex-start; }
 .chip-teal { background: #e6f4f4; border-color: #bfe3e3; color: var(--teal); }

@@ -1,7 +1,7 @@
 import { mergeCatalog } from '../../../domain/component.js';
 import { retryProvision } from '../../../infrastructure/api/catalogApi.js';
 import { StatusPill } from '../../components/Feedback.jsx';
-import ComponentRuns from './ComponentRuns.jsx';
+import { GhIcon, PrIcon } from '../../components/Icons.jsx';
 
 const dateOnly = (iso) => (iso ? new Date(iso).toLocaleDateString() : '—');
 
@@ -18,9 +18,8 @@ export default function ComponentsTable({ manifest, catalog, templates = [], q, 
     <table>
       <thead>
         <tr>
-          <th>Nombre</th><th>Nombre corto</th><th>Plantilla</th><th>Repo</th>
-          <th>Versión</th><th>Dependencias</th><th>Creado</th>
-          <th>Estado</th><th>Último run</th>
+          <th>Nombre</th><th>Nombre corto</th><th>Plantilla</th>
+          <th>Creado</th><th>Herramientas</th><th>Estado</th>
         </tr>
       </thead>
       <tbody>
@@ -34,14 +33,15 @@ export default function ComponentsTable({ manifest, catalog, templates = [], q, 
                 ? <>{templates.find((t) => t.name === c.db.template)?.display_name || c.db.template}{' '}
                     <span className={`chip${kind === 'lib' ? '' : ' chip-teal'}`}>{kind || '?'}</span></>
                 : <span className="muted">—</span>}</td>
-              <td><a href={`https://github.com/${c.repo}`} target="_blank" rel="noreferrer">{c.repo}</a></td>
-              <td><code>{c.tag}</code></td>
-              <td><span className="chips">
-                {(c.needs || []).length
-                  ? c.needs.map((n) => <span key={n} className="chip">{n}</span>)
-                  : <span className="muted">—</span>}
-              </span></td>
               <td><span className="muted">{dateOnly(c.db?.created_at)}</span></td>
+              <td><span className="tools">
+                <a href={`https://github.com/${c.repo}`} target="_blank" rel="noreferrer"
+                   title={c.repo}>{GhIcon}</a>
+                {c.db?.manifest_pr &&
+                  <a href={`https://github.com/progmise/deploy-manifest/pull/${c.db.manifest_pr}`}
+                     target="_blank" rel="noreferrer"
+                     title={`PR de registro #${c.db.manifest_pr}`}>{PrIcon}</a>}
+              </span></td>
               <td>{c.db
                 ? <>
                     <StatusPill status={c.db.status} />
@@ -50,8 +50,6 @@ export default function ComponentsTable({ manifest, catalog, templates = [], q, 
                         onClick={() => retryProvision(c.name).then(onChanged).catch(onChanged)}>↻</button>}
                   </>
                 : <span className="pill outline">deployed</span>}</td>
-              <td><ComponentRuns repo={c.repo}
-                workflow={kind === 'lib' ? 'release.yml' : 'deploy.yml'} /></td>
             </tr>
           );
         })}

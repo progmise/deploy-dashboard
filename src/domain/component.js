@@ -15,6 +15,18 @@ export const STATUS_LABEL = {
 
 export const NAME_RE = /^[a-z0-9][a-z0-9-]{0,38}[a-z0-9]$/;
 export const REPO_RE = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,99}$/;
+export const SHORTNAME_RE = /^[A-Z0-9]{2,30}$/;
+export const shortnameFor = (name) => name.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+// Initial "Personalización" answers for a template's declared fields
+// (selects get their default; fixed fields are shown read-only).
+export const defaultConfig = (fields = []) =>
+  Object.fromEntries(fields.filter((f) => f.type === 'select').map((f) => [f.key, f.default]));
+
+// Display label for a personalization value (selects resolve to their
+// option's label; fixed/unknown keys pass through).
+export const configLabel = (fields = [], key, value) =>
+  fields.find((f) => f.key === key)?.options?.find((o) => o.value === value)?.label ?? value;
 
 // Joins the manifest's deployed components with the catalog's lifecycle rows:
 // catalog entries missing from the manifest are still provisioning (or failed).

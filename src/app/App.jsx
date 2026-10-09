@@ -9,6 +9,7 @@ import ReleasesTable from '../ui/features/releases/ReleasesTable.jsx';
 import ComponentsTable from '../ui/features/components/ComponentsTable.jsx';
 import DependencyGraph from '../ui/features/components/DependencyGraph.jsx';
 import ComponentWizard from '../ui/features/components/ComponentWizard.jsx';
+import TemplateGallery from '../ui/features/components/TemplateGallery.jsx';
 import OrchRuns from '../ui/features/deployments/OrchRuns.jsx';
 
 const NAV = [
@@ -20,7 +21,7 @@ const NAV = [
 export default function App() {
   const me = useSession();
   const { manifest, releases, runs, catalog, templates, error, reloadCatalog } = useDashboardData(me);
-  const [wizard, setWizard] = useState(false);
+  const [wizardTemplate, setWizardTemplate] = useState(null);
   const [view, setView] = useState('releases');
   const [q, setQ] = useState('');
 
@@ -30,7 +31,9 @@ export default function App() {
   if (error) return <CenterCard title="Deploy Orchestrator" sub={error} />;
   if (!manifest) return <CenterCard title="Deploy Orchestrator" sub="Cargando…" />;
 
-  const viewLabel = NAV.find((n) => n.id === view)?.label || '';
+  const viewLabel = view === 'nuevo-componente'
+    ? 'Componentes / Nuevo componente'
+    : NAV.find((n) => n.id === view)?.label || '';
   const lower = q.toLowerCase();
 
   return (
@@ -84,7 +87,7 @@ export default function App() {
                 <SearchRow q={q} setQ={setQ} placeholder="Buscar por nombre, nombre corto o plantilla…"
                   action={
                     <button className="btn btn-primary" style={{ marginLeft: 'auto' }}
-                      onClick={() => setWizard(true)}>Nuevo componente +</button>
+                      onClick={() => { setView('nuevo-componente'); setQ(''); }}>Nuevo componente +</button>
                   } />
                 <ComponentsTable manifest={manifest} catalog={catalog} templates={templates}
                   q={lower} onChanged={reloadCatalog} />
@@ -94,6 +97,10 @@ export default function App() {
                 <DependencyGraph components={manifest.components} />
               </div>
             </>
+          )}
+
+          {view === 'nuevo-componente' && (
+            <TemplateGallery templates={templates} onPick={setWizardTemplate} />
           )}
 
           {view === 'despliegues' && (
@@ -106,7 +113,12 @@ export default function App() {
 
         </div>
       </div>
-      {wizard && <ComponentWizard onClose={() => setWizard(false)} onCreated={reloadCatalog} />}
+      {wizardTemplate && (
+        <ComponentWizard template={wizardTemplate}
+          onClose={() => setWizardTemplate(null)}
+          onBack={() => setWizardTemplate(null)}
+          onCreated={reloadCatalog} />
+      )}
     </>
   );
 }

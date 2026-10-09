@@ -1,24 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { NAME_RE, REPO_RE, SHORTNAME_RE, STATUS_LABEL, shortnameFor,
   defaultConfig, configLabel } from '../../../domain/component.js';
-import { getTemplates, createComponent, retryProvision } from '../../../infrastructure/api/catalogApi.js';
+import { createComponent, retryProvision } from '../../../infrastructure/api/catalogApi.js';
 import { StatusPill } from '../../components/Feedback.jsx';
 
-export default function ComponentWizard({ onClose, onCreated }) {
+export default function ComponentWizard({ template, onClose, onBack, onCreated }) {
   const [step, setStep] = useState(0);
-  const [templates, setTemplates] = useState(null);
-  const [template, setTemplate] = useState(null);
   const [form, setForm] = useState({ name: '', shortname: '', repo: '', description: '' });
-  const [config, setConfig] = useState({});
+  const [config, setConfig] = useState(() => defaultConfig(template.fields));
   const [repoTouched, setRepoTouched] = useState(false);
   const [shortTouched, setShortTouched] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
-
-  useEffect(() => {
-    getTemplates().then(setTemplates).catch((e) => setError(e.message));
-  }, []);
 
   const setField = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const repoName = repoTouched ? form.repo : form.name;
@@ -27,11 +21,6 @@ export default function ComponentWizard({ onClose, onCreated }) {
   const repoOk = REPO_RE.test(repoName);
   const shortOk = SHORTNAME_RE.test(shortname);
   const descOk = form.description.trim().length > 0;
-
-  const pick = (t) => {
-    setTemplate(t);
-    setConfig(defaultConfig(t.fields));
-  };
 
   const submit = async () => {
     setBusy(true);
@@ -70,10 +59,14 @@ export default function ComponentWizard({ onClose, onCreated }) {
           <h2>Nuevo componente</h2>
           <button className="btn btn-outline" onClick={onClose}>✕</button>
         </div>
+        <p className="muted" style={{ margin: '0 0 12px' }}>
+          {template.display_name || template.name}{' '}
+          <span className={`chip${template.kind === 'lib' ? '' : ' chip-teal'}`}>{template.kind}</span>
+        </p>
 
         {!result && (
           <div className="wiz-steps">
-            {['Plantilla', 'Información', 'Personalización', 'Resumen'].map((l, i) => (
+            {['Información', 'Personalización', 'Resumen'].map((l, i) => (
               <span key={l} className={`wiz-step${step === i ? ' active' : ''}${step > i ? ' done' : ''}`}>
                 {i + 1}. {l}
               </span>
@@ -84,24 +77,6 @@ export default function ComponentWizard({ onClose, onCreated }) {
         {error && <div className="alert-error">{error}</div>}
 
         {!result && step === 0 && (
-          <>
-            {!templates && !error && <p className="muted">Cargando plantillas…</p>}
-            <div className="tpl-grid">
-              {(templates || []).map((t) => (
-                <button key={t.name}
-                  className={`tpl-card${template?.name === t.name ? ' selected' : ''}`}
-                  onClick={() => pick(t)}>
-                  <strong>{t.display_name || t.name}</strong>
-                  <span className="muted">{t.description || '—'}</span>
-                  <span className={`chip${t.kind === 'lib' ? '' : ' chip-teal'}`}>{t.kind}</span>
-                  <span className="muted" style={{ fontSize: 11 }}>{t.name}</span>
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-
-        {!result && step === 1 && (
           <div className="form">
             <label className="field">
               <span>Nombre del componente *</span>
@@ -130,7 +105,7 @@ export default function ComponentWizard({ onClose, onCreated }) {
           </div>
         )}
 
-        {!result && step === 2 && (
+        {!result && step === 1 && (
           <div className="form">
             {(template.fields || []).map((f) => (
               <label key={f.key} className="field">
@@ -155,7 +130,7 @@ export default function ComponentWizard({ onClose, onCreated }) {
           </div>
         )}
 
-        {!result && step === 3 && (
+        {!result && step === 2 && (
           <div className="summary">
             <table className="summary-table">
               <tbody>
@@ -206,8 +181,9 @@ export default function ComponentWizard({ onClose, onCreated }) {
         )}
 
         <div className="modal-foot">
-          {!result && step > 0 &&
-            <button className="btn btn-outline" onClick={() => setStep(step - 1)}>Atrás</button>}
+          {!result && (step > 0
+            ? <button className="btn btn-outline" onClick={() => setStep(step - 1)}>Atrás</button>
+            : <button className="btn btn-outline" onClick={onBack}>Atrás</button>)}
           <span style={{ flex: 1 }} />
           {result
             ? result.status === 'failed'
@@ -215,10 +191,9 @@ export default function ComponentWizard({ onClose, onCreated }) {
                   {busy ? 'Reintentando…' : 'Reintentar'}
                 </button>
               : <button className="btn btn-primary" onClick={onClose}>Listo</button>
-            : step < 3
+            : step < 2
               ? <button className="btn btn-primary"
-                  disabled={(step === 0 && !template)
-                    || (step === 1 && (!nameOk || !repoOk || !shortOk || !descOk))}
+                  disabled={step === 0 && (!nameOk || !repoOk || !shortOk || !descOk)}
                   onClick={() => setStep(step + 1)}>Siguiente</button>
               : <button className="btn btn-primary" disabled={busy} onClick={submit}>
                   {busy ? 'Creando…' : 'Crear componente'}
